@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviewer Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #080f1f; color: #e6eeff; }
+        .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.12); }
+        .tab-active { background: rgba(255,255,255,0.16); border-color: #818cf8; }
+    </style>
+</head>
+
+<body class="min-h-screen flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 glass min-h-screen p-6">
+        <h2 class="text-2xl font-bold text-indigo-300 mb-8 flex items-center gap-2">🕵️‍♂️ Reviewer</h2>
+
+        <nav class="space-y-4">
+            <a href="#" class="block text-indigo-200 hover:text-indigo-400">📥 Dokumen Masuk</a>
+            <a href="#" class="block text-indigo-200 hover:text-indigo-400">📂 Sedang Direview</a>
+            <a href="#" class="block text-indigo-200 hover:text-indigo-400">📁 Arsip</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 p-10">
+
+        <!-- HEADER -->
+        <div class="glass p-4 rounded-2xl mb-10 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-indigo-300">Dashboard Reviewer</h1>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="text-red-300 hover:text-red-400">Logout</button>
+            </form>
+        </div>
+
+        <!-- REVIEW TABS -->
+        <div class="glass p-4 rounded-2xl mb-10 flex gap-3">
+            <button class="px-4 py-2 rounded-xl border tab-active">Review 1</button>
+            <button class="px-4 py-2 rounded-xl border">Review 2</button>
+            <button class="px-4 py-2 rounded-xl border">Review 3</button>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- BOX: DOKUMEN BARU -->
+            <div class="glass p-6 rounded-2xl" data-aos="fade-up">
+                <h3 class="text-xl font-semibold text-indigo-200 mb-3">📄 Isi Dokumen</h3>
+                <p class="text-indigo-100 opacity-80 mb-4">Klik untuk membaca dokumen lengkap.</p>
+                <a href="#" class="px-3 py-2 glass rounded-lg text-indigo-300 border border-indigo-400/40">Buka Dokumen</a>
+            </div>
+
+            <!-- BOX: KOMENTAR -->
+            <div class="glass p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="150">
+                <h3 class="text-xl font-semibold text-indigo-200 mb-3">💬 Komentar & Inline Notes</h3>
+                <p class="text-indigo-100 opacity-80 mb-4">Tinjau catatan reviewer sebelumnya.</p>
+                <a href="#" class="px-3 py-2 glass rounded-lg text-indigo-300 border border-indigo-400/40">Lihat Komentar</a>
+            </div>
+
+            <!-- BOX: RIWAYAT -->
+            <div class="glass p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="300">
+                <h3 class="text-xl font-semibold text-indigo-200 mb-3">🗂 Riwayat Versi</h3>
+                <p class="text-indigo-100 opacity-80 mb-4">Perubahan dokumen dari waktu ke waktu.</p>
+                <a href="#" class="px-3 py-2 glass rounded-lg text-indigo-300 border border-indigo-400/40">Lihat Riwayat</a>
+            </div>
+        </div>
+
+        <!-- ACTION PANEL -->
+        <div class="mt-10 glass p-6 rounded-2xl" data-aos="fade-up">
+            <h3 class="text-2xl font-semibold text-indigo-200 mb-5">Aksi Review</h3>
+
+            <div class="flex flex-wrap gap-4 mb-6">
+                <button class="px-6 py-3 bg-green-500/20 hover:bg-green-500/30 border border-green-400/40 rounded-xl text-green-300 text-lg">
+                    ✅ Approve
+                </button>
+
+                <button class="px-6 py-3 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-400/40 rounded-xl text-yellow-300 text-lg">
+                    🔁 Request Changes
+                </button>
+
+                <button class="px-6 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-400/40 rounded-xl text-red-300 text-lg">
+                    ❌ Reject
+                </button>
+            </div>
+
+            <!-- TRACKING -->
+            <div class="glass p-4 rounded-xl border border-indigo-500/30">
+                <h4 class="text-lg font-semibold text-indigo-300 mb-2">📊 Tracking Aktivitas</h4>
+                <p class="text-indigo-200">Reviewer: <span class="text-white font-semibold">Nama Reviewer</span></p>
+                <p class="text-indigo-200">Mulai Review: 23 Nov 2025</p>
+                <p class="text-indigo-200">Deadline: 26 Nov 2025 <span class="text-red-300">(2 hari lagi)</span></p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script> AOS.init({ once: true, duration: 900 }); </script>
+</body>
+</html>

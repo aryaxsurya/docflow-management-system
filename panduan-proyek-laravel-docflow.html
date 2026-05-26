@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panduan Proyek DocFlow – Laravel 12</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE6;
+    --border: #E2DDD4;
+    --accent: #1A3A2A;
+    --accent2: #2D6A4F;
+    --accent-light: #D8F0E4;
+    --highlight: #E8A020;
+    --highlight-light: #FFF3D6;
+    --danger: #C0392B;
+    --danger-light: #FDECEA;
+    --info: #1A5276;
+    --info-light: #D6EAF8;
+    --text: #1A1714;
+    --text2: #4A4640;
+    --text3: #857F78;
+    --code-bg: #1E1E1E;
+    --code-text: #D4D4D4;
+    --tag-bg: #E8F5EE;
+    --tag-text: #1A5C38;
+  }
+
+  .dark {
+    --bg: #0B1117;
+    --surface: #111B26;
+    --surface2: #131F2C;
+    --border: #273141;
+    --accent: #7CC7A4;
+    --accent2: #4EA78A;
+    --accent-light: #173B2F;
+    --highlight: #F59E0B;
+    --highlight-light: #342309;
+    --danger: #EF4444;
+    --danger-light: #4B141D;
+    --info: #38BDF8;
+    --info-light: #0C2E47;
+    --text: #E2E8F0;
+    --text2: #C0CBDD;
+    --text3: #94A3B8;
+    --code-bg: #0F172A;
+    --code-text: #E2E8F0;
+    --tag-bg: #1B2D3B;
+    --tag-text: #7DD3FC;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .theme-toggle {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: rgba(255,255,255,0.12);
+    color: inherit;
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    z-index: 2;
+  }
+
+  .theme-toggle:hover {
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.18);
+  }
+
+  /* HEADER */
+  header {
+    background: var(--accent);
+    color: white;
+    padding: 64px 40px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 360px; height: 360px;
+    background: var(--accent2);
+    border-radius: 50%;
+    opacity: 0.3;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 20%;
+    width: 200px; height: 200px;
+    background: var(--highlight);
+    border-radius: 50%;
+    opacity: 0.1;
+  }
+  .header-content { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+  .header-badge {
+    display: inline-block;
+    background: var(--highlight);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px;
+    line-height: 1.15;
+    font-weight: 400;
+    margin-bottom: 16px;
+    color: white;
+  }
+  header p {
+    font-size: 16px;
+    opacity: 0.8;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+  .meta-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    opacity: 0.75;
+  }
+  .meta-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--highlight); }
+
+  /* LAYOUT */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+  /* OVERVIEW CARDS */
+  .overview-section {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 24px;
+  }
+  .overview-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .overview-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    background: var(--bg);
+  }
+  .overview-card .oc-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .oc-green .oc-icon { background: var(--accent-light); }
+  .oc-yellow .oc-icon { background: var(--highlight-light); }
+  .oc-blue .oc-icon { background: var(--info-light); }
+  .overview-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .overview-card p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+  /* TOC */
+  .toc-section {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 24px;
+  }
+  .toc-inner { max-width: 900px; margin: 0 auto; }
+  .toc-title {
+    font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--text3);
+    margin-bottom: 16px;
+  }
+  .toc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .toc-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    text-decoration: none; color: var(--text);
+    font-size: 13px; transition: background 0.15s;
+  }
+  .toc-item:hover { background: var(--accent-light); }
+  .toc-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); color: white;
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* MAIN CONTENT */
+  main { padding: 48px 24px 80px; }
+
+  /* PHASE BLOCK */
+  .phase {
+    max-width: 900px; margin: 0 auto 48px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .phase-header {
+    padding: 24px 32px;
+    display: flex; align-items: flex-start; gap: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .phase-num {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .phase-num.highlight { background: var(--highlight); color: var(--accent); }
+  .phase-num.info { background: var(--info); }
+  .phase-num.danger { background: var(--danger); }
+  .phase-header-text { flex: 1; }
+  .phase-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--text3);
+    margin-bottom: 4px;
+  }
+  .phase-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; font-weight: 400;
+    line-height: 1.2;
+    color: var(--text);
+  }
+  .phase-header p {
+    font-size: 14px; color: var(--text2);
+    margin-top: 6px; line-height: 1.5;
+  }
+  .phase-meta {
+    display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap;
+  }
+  .phase-tag {
+    font-size: 11px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+    background: var(--tag-bg); color: var(--tag-text);
+    border: 1px solid #C0E0CE;
+  }
+  .phase-tag.yellow {
+    background: var(--highlight-light); color: #7A5000;
+    border-color: #F0D070;
+  }
+  .phase-tag.blue {
+    background: var(--info-light); color: var(--info);
+    border-color: #A9CCE3;
+  }
+  .phase-tag.red {
+    background: var(--danger-light); color: var(--danger);
+    border-color: #F5B7B1;
+  }
+
+  .phase-body { padding: 0; }
+
+  /* STEP */
+  .step {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .step:last-child { border-bottom: none; }
+  .step-bullet {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--accent2);
+    color: var(--accent2);
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .step p { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+  .step p:last-child { margin-bottom: 0; }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    overflow-x: auto;
+    position: relative;
+  }
+  .code-block .code-label {
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 10px; font-weight: 500;
+    color: #888;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--code-text);
+    white-space: pre;
+    margin: 0;
+  }
+  .code-comment { color: #6A9955; }
+  .code-cmd { color: #9CDCFE; }
+  .code-str { color: #CE9178; }
+  .code-key { color: #569CD6; }
+  .code-func { color: #DCDCAA; }
+
+  /* CHECKLIST */
+  .checklist {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    list-style: none;
+  }
+  .checklist li {
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text2);
+    display: flex; align-items: flex-start; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: '○';
+    color: var(--accent2);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* DELIVERABLE BOX */
+  .deliverable {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent2);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .deliverable strong { display: block; font-weight: 600; margin-bottom: 4px; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  /* WARNING BOX */
+  .warning-box {
+    background: var(--highlight-light);
+    border-left: 4px solid var(--highlight);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: #6B4200;
+  }
+  .warning-box strong { display: block; font-weight: 600; margin-bottom: 4px; }
+
+  /* INFO BOX */
+  .info-box {
+    background: var(--info-light);
+    border-left: 4px solid var(--info);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: var(--info);
+  }
+  .info-box strong { display: block; font-weight: 600; margin-bottom: 4px; }
+
+  /* TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .data-table th {
+    background: var(--accent);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+  }
+  .data-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:nth-child(even) td { background: var(--bg); }
+
+  /* DB SCHEMA VISUAL */
+  .schema-visual {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .schema-table {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 12px;
+  }
+  .schema-table-header {
+    background: var(--accent);
+    color: white;
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .schema-table-body { padding: 8px 0; }
+  .schema-field {
+    padding: 4px 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.4;
+  }
+  .schema-field:last-child { border-bottom: none; }
+  .schema-field-name { color: var(--text2); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .schema-field-type { color: var(--accent2); font-size: 10px; font-weight: 500; background: var(--accent-light); padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+  .schema-field-pk { color: var(--highlight); font-size: 10px; font-weight: 600; }
+
+  /* ROLE BADGES */
+  .role-badges { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+  .role-badge {
+    padding: 4px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+  }
+  .rb-user { background: var(--info-light); color: var(--info); border: 1px solid #A9CCE3; }
+  .rb-reviewer { background: var(--highlight-light); color: #7A5000; border: 1px solid #F0D070; }
+  .rb-admin { background: var(--danger-light); color: var(--danger); border: 1px solid #F5B7B1; }
+
+  /* FLOW DIAGRAM */
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 16px 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .flow-node {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 90px;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+  .flow-node.active { border-color: var(--accent2); background: var(--accent-light); color: var(--accent); }
+  .flow-arrow {
+    color: var(--text3);
+    font-size: 16px;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    max-width: 900px; margin: 0 auto 48px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .sd-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text3);
+    white-space: nowrap;
+  }
+  .sd-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* FOOTER */
+  footer {
+    background: var(--accent);
+    color: white;
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 13px;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 640px) {
+    header h1 { font-size: 32px; }
+    .overview-grid { grid-template-columns: 1fr; }
+    .toc-grid { grid-template-columns: 1fr; }
+    .schema-visual { grid-template-columns: 1fr; }
+    .step { grid-template-columns: 1fr; }
+    .step-bullet { display: none; }
+    .phase-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="header-badge">Laravel 12 · Panduan Lengkap</div>
+    <button id="theme-toggle" class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle tema gelap">🌙</button>
+    <h1>Panduan Pengembangan<br>DocFlow Management System</h1>
+    <p>Step-by-step dari nol hingga production — berdasarkan metodologi Software Engineering dari buku <em>A Concise Introduction to Software Engineering</em> (Pankaj Jalote).</p>
+    <div class="meta-row">
+      <div class="meta-item"><div class="meta-dot"></div> 8 Fase Pengembangan</div>
+      <div class="meta-item"><div class="meta-dot"></div> 3 Peran Pengguna</div>
+      <div class="meta-item"><div class="meta-dot"></div> Laravel 12 + MySQL</div>
+      <div class="meta-item"><div class="meta-dot"></div> Iterative Development</div>
+    </div>
+  </div>
+</header>
+
+<!-- Overview -->
+<div class="overview-section">
+  <div class="overview-grid">
+    <div class="overview-card oc-green">
+      <div class="oc-icon">📋</div>
+      <h3>Pendekatan Proses</h3>
+      <p>Menggunakan model <strong>Iterative + Waterfall</strong> — requirements dan arsitektur didefinisikan di awal, fitur dikembangkan secara bertahap per modul.</p>
+    </div>
+    <div class="overview-card oc-yellow">
+      <div class="oc-icon">⚡</div>
+      <h3>Prioritas Risiko</h3>
+      <p>Jalote menekankan <em>risk-driven development</em>. Modul dengan kompleksitas tertinggi (alur review bertingkat) dikerjakan lebih dahulu.</p>
+    </div>
+    <div class="overview-card oc-blue">
+      <div class="oc-icon">🧪</div>
+      <h3>Quality Built-in</h3>
+      <p>Testing bukan tahap terakhir. Setiap modul dilengkapi unit test dan integration test sebelum lanjut ke modul berikutnya.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc-section">
+  <div class="toc-inner">
+    <div class="toc-title">Daftar Fase</div>
+    <div class="toc-grid">
+      <a href="#fase1" class="toc-item"><div class="toc-num">1</div> Requirement Analysis & SRS</a>
+      <a href="#fase2" class="toc-item"><div class="toc-num">2</div> Project Planning</a>
+      <a href="#fase3" class="toc-item"><div class="toc-num">3</div> Arsitektur & Database Design</a>
+      <a href="#fase4" class="toc-item"><div class="toc-num">4</div> Setup Environment & Scaffolding</a>
+      <a href="#fase5" class="toc-item"><div class="toc-num">5</div> Implementasi Core Modules</a>
+      <a href="#fase6" class="toc-item"><div class="toc-num">6</div> Testing & Quality Assurance</a>
+      <a href="#fase7" class="toc-item"><div class="toc-num">7</div> Deployment & Go-Live</a>
+      <a href="#fase8" class="toc-item"><div class="toc-num">8</div> Maintenance & Iterasi</a>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ======================== FASE 1 ======================== -->
+<div class="phase" id="fase1">
+  <div class="phase-header">
+    <div class="phase-num">1</div>
+    <div class="phase-header-text">
+      <div class="phase-label">Fase 1 · Foundation</div>
+      <h2>Requirement Analysis & Software Requirements Specification (SRS)</h2>
+      <p>Jalote menegaskan: SRS yang baik adalah fondasi seluruh proyek. "A good SRS reduces cost and effort significantly later." Tanpa ini, semua fase berikutnya menjadi tebakan.</p>
+      <div class="phase-meta">
+        <span class="phase-tag">📖 Bab 3 Jalote</span>
+        <span class="phase-tag yellow">⏱ 3–5 Hari</span>
+        <span class="phase-tag blue">📄 Output: Dokumen SRS</span>
+      </div>
+    </div>
+  </div>
+  <div class="phase-body">
+
+    <div class="step">
+      <div class="step-bullet">1</div>
+      <div>
+        <h4>Identifikasi Stakeholder & Elicitation Requirements</h4>
+        <p>Lakukan interview atau workshop dengan calon pengguna dari ketiga peran. Gunakan teknik <strong>use case elicitation</strong> seperti yang dijelaskan Jalote di Bab 3 — ajukan pertanyaan berbasis skenario nyata.</p>
+        <div class="info-box">
+          <strong>Pertanyaan Kunci yang Harus Dijawab</strong>
+          Siapa yang boleh melihat dokumen orang lain? Berapa maksimum level review? Apa yang terjadi jika reviewer tidak respons dalam X hari? Apakah dokumen yang di-reject bisa diajukan ulang?
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">2</div>
+      <div>
+        <h4>Definisikan Use Case untuk Setiap Peran</h4>
+        <div class="role-badges">
+          <span class="role-badge rb-user">User</span>
+          <span class="role-badge rb-reviewer">Reviewer</span>
+          <span class="role-badge rb-admin">Admin</span>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Peran</th><th>Use Case Utama</th><th>Prioritas</th></tr></thead>
+          <tbody>
+            <tr><td>User</td><td>Buat dokumen, simpan draft, submit, lihat status, lihat riwayat</td><td>🔴 High</td></tr>
+            <tr><td>Reviewer</td><td>Lihat antrian, review dokumen, approve/reject/minta revisi, deadline monitor</td><td>🔴 High</td></tr>
+            <tr><td>Admin</td><td>Approve akun, monitor semua dokumen, kelola user, finalisasi arsip</td><td>🟡 Medium</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">3</div>
+      <div>
+        <h4>Tulis Dokumen SRS (Software Requirements Specification)</h4>
+        <p>Jalote di Bab 3.3 mendefinisikan SRS yang baik harus: <em>complete, consistent, unambiguous, verifiable, dan modifiable.</em></p>
+        <ul class="checklist">
+          <li>Tujuan sistem dan ruang lingkup</li>
+          <li>Functional requirements per use case (dalam format: "Sistem harus ...")</li>
+          <li>Non-functional requirements: performance, security, usability</li>
+          <li>Constraint: Laravel 12, MySQL, browser-based, multi-role</li>
+          <li>Business rules: alur review bertingkat, aturan deadline, aturan re-submission</li>
+        </ul>
+        <div class="deliverable">
+          <strong>📄 Deliverable</strong>
+          File <code>SRS_DocFlow_v1.0.pdf</code> — minimal 15 halaman, mencakup semua use case, business rules, dan batasan sistem.
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">4</div>
+      <div>
+        <h4>Validasi Requirements bersama Stakeholder</h4>
+        <p>Jalote menekankan pentingnya <em>requirements validation</em> sebelum lanjut ke fase desain. Lakukan sesi review dengan calon pengguna — pastikan tidak ada requirements yang saling bertentangan.</p>
+        <div class="warning-box">
+          <strong>⚠ Jangan Lewati Ini!</strong>
+          Requirements yang belum divalidasi adalah sumber terbesar cost overrun. Perubahan requirement di fase coding 10× lebih mahal dari di fase ini.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================== FASE 2 ======================== -->
+<div class="phase" id="fase2">
+  <div class="phase-header">
+    <div class="phase-num highlight">2</div>
+    <div class="phase-header-text">
+      <div class="phase-label">Fase 2 · Planning</div>
+      <h2>Project Planning — Estimasi, Jadwal & Manajemen Risiko</h2>
+      <p>Bab 4 Jalote membahas perencanaan proyek secara detail: effort estimation, scheduling, quality plan, dan risk management. Semua harus dilakukan sebelum coding dimulai.</p>
+      <div class="phase-meta">
+        <span class="phase-tag">📖 Bab 4 Jalote</span>
+        <span class="phase-tag yellow">⏱ 2–3 Hari</span>
+        <span class="phase-tag blue">📄 Output: Project Plan</span>
+      </div>
+    </div>
+  </div>
+  <div class="phase-body">
+
+    <div class="step">
+      <div class="step-bullet">1</div>
+      <div>
+        <h4>Estimasi Effort & Ukuran Proyek</h4>
+        <p>Gunakan pendekatan <strong>Bottom-Up Estimation</strong> (Jalote Bab 4.1.2): pecah proyek menjadi task kecil, estimasi masing-masing, lalu jumlahkan.</p>
+        <table class="data-table">
+          <thead><tr><th>Modul</th><th>Estimasi (Hari)</th><th>Kompleksitas</th></tr></thead>
+          <tbody>
+            <tr><td>Setup environment & scaffolding</td><td>2</td><td>🟢 Low</td></tr>
+            <tr><td>Auth multi-role + approval akun</td><td>3</td><td>🟡 Medium</td></tr>
+            <tr><td>Manajemen dokumen (CRUD + draft)</td><td>4</td><td>🟡 Medium</td></tr>
+            <tr><td>Alur review bertingkat</td><td>6</td><td>🔴 High</td></tr>
+            <tr><td>Dashboard per peran</td><td>4</td><td>🟡 Medium</td></tr>
+            <tr><td>Notifikasi & audit log</td><td>3</td><td>🟡 Medium</td></tr>
+            <tr><td>Arsip & laporan</td><td>3</td><td>🟢 Low</td></tr>
+            <tr><td>Testing & bug fixing</td><td>5</td><td>🟡 Medium</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>~30 Hari</strong></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">2</div>
+      <div>
+        <h4>Buat Jadwal Iteratif & Milestones</h4>
+        <p>Jalote merekomendasikan <em>Iterative Development</em> untuk proyek dengan requirements yang sudah cukup jelas. Bagi menjadi sprint 2 minggu.</p>
+        <table class="data-table">
+          <thead><tr><th>Iterasi</th><th>Fokus</th><th>Milestone</th></tr></thead>
+          <tbody>
+            <tr><td>Iterasi 0 (Minggu 1)</td><td>Setup, arsitektur, DB schema</td><td>Environment berjalan</td></tr>
+            <tr><td>Iterasi 1 (Minggu 2–3)</td><td>Auth, user management, roles</td><td>Login per peran berfungsi</td></tr>
+            <tr><td>Iterasi 2 (Minggu 4–5)</td><td>Dokumen CRUD, draft, submit</td><td>User bisa kirim dokumen</td></tr>
+            <tr><td>Iterasi 3 (Minggu 6–7)</td><td>Review bertingkat, audit log</td><td>Alur review end-to-end</td></tr>
+            <tr><td>Iterasi 4 (Minggu 8)</td><td>Dashboard, notifikasi, arsip</td><td>Fitur lengkap</td></tr>
+            <tr><td>Iterasi 5 (Minggu 9–10)</td><td>Testing, bug fix, deployment</td><td>Production-ready</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">3</div>
+      <div>
+        <h4>Risk Management Plan</h4>
+        <p>Jalote Bab 4.4: identifikasi risiko, nilai probabilitas & dampaknya, lalu buat rencana mitigasi.</p>
+        <table class="data-table">
+          <thead><tr><th>Risiko</th><th>Probabilitas</th><th>Dampak</th><th>Mitigasi</th></tr></thead>
+          <tbody>
+            <tr><td>Alur review lebih kompleks dari ekspektasi</td><td>Tinggi</td><td>Tinggi</td><td>Prototyping di Iterasi 3, validasi early</td></tr>
+            <tr><td>Perubahan requirements di tengah jalan</td><td>Medium</td><td>Medium</td><td>Freeze requirements per iterasi</td></tr>
+            <tr><td>Masalah performa upload file besar</td><td>Low</td><td>Medium</td><td>Test dengan file >10MB di Iterasi 2</td></tr>
+          </tbody>
+        </table>
+        <div class="deliverable">
+          <strong>📄 Deliverable</strong>
+          Dokumen <code>ProjectPlan_DocFlow.xlsx</code> berisi: estimasi, jadwal Gantt/tabel, risk register, dan quality plan.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================== FASE 3 ======================== -->
+<div class="phase" id="fase3">
+  <div class="phase-header">
+    <div class="phase-num info">3</div>
+    <div class="phase-header-text">
+      <div class="phase-label">Fase 3 · Architecture</div>
+      <h2>Desain Arsitektur Sistem & Database Schema</h2>
+      <p>Jalote Bab 5: arsitektur adalah keputusan desain paling krusial yang mempengaruhi kualitas seluruh sistem. Kesalahan di sini mahal untuk diperbaiki.</p>
+      <div class="phase-meta">
+        <span class="phase-tag">📖 Bab 5 & 6 Jalote</span>
+        <span class="phase-tag yellow">⏱ 3–4 Hari</span>
+        <span class="phase-tag blue">📄 Output: Architecture Doc + ERD</span>
+      </div>
+    </div>
+  </div>
+  <div class="phase-body">
+
+    <div class="step">
+      <div class="step-bullet">1</div>
+      <div>
+        <h4>Pilih & Dokumentasikan Arsitektur Aplikasi</h4>
+        <p>Gunakan arsitektur <strong>MVC (Model-View-Controller)</strong> bawaan Laravel dengan beberapa tambahan layer untuk cleanness:</p>
+        <ul class="checklist">
+          <li><strong>Models</strong> — Eloquent ORM untuk semua entitas data</li>
+          <li><strong>Controllers</strong> — dipisah per domain: AuthController, DocumentController, ReviewController, AdminController</li>
+          <li><strong>Service Layer</strong> — DocumentService, ReviewService untuk business logic kompleks (agar controller tetap tipis)</li>
+          <li><strong>Form Request</strong> — validasi input dipisah dari controller</li>
+          <li><strong>Policies & Gates</strong> — authorization berbasis peran</li>
+          <li><strong>Events & Listeners</strong> — untuk notifikasi dan audit log (decoupled)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">2</div>
+      <div>
+        <h4>Desain Database Schema (ERD)</h4>
+        <p>Ini adalah keputusan paling kritis. Semua tabel dan relasi harus dirancang sebelum migrasi pertama dibuat.</p>
+        <div class="schema-visual">
+          <div class="schema-table">
+            <div class="schema-table-header">users</div>
+            <div class="schema-table-body">
+              <div class="schema-field"><span class="schema-field-name">id</span><span class="schema-field-pk">PK</span></div>
+              <div class="schema-field"><span class="schema-field-name">name</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">email</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">password</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">role</span><span class="schema-field-type">enum</span></div>
+              <div class="schema-field"><span class="schema-field-name">status</span><span class="schema-field-type">enum</span></div>
+              <div class="schema-field"><span class="schema-field-name">unit_kerja</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">reviewer_level</span><span class="schema-field-type">int?</span></div>
+            </div>
+          </div>
+          <div class="schema-table">
+            <div class="schema-table-header">documents</div>
+            <div class="schema-table-body">
+              <div class="schema-field"><span class="schema-field-name">id</span><span class="schema-field-pk">PK</span></div>
+              <div class="schema-field"><span class="schema-field-name">user_id</span><span class="schema-field-type">FK → users</span></div>
+              <div class="schema-field"><span class="schema-field-name">judul</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">jenis_dokumen</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">unit_kerja</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">deskripsi</span><span class="schema-field-type">text</span></div>
+              <div class="schema-field"><span class="schema-field-name">tanggal_berlaku</span><span class="schema-field-type">date</span></div>
+              <div class="schema-field"><span class="schema-field-name">status</span><span class="schema-field-type">enum</span></div>
+              <div class="schema-field"><span class="schema-field-name">current_level</span><span class="schema-field-type">int</span></div>
+            </div>
+          </div>
+          <div class="schema-table">
+            <div class="schema-table-header">review_logs</div>
+            <div class="schema-table-body">
+              <div class="schema-field"><span class="schema-field-name">id</span><span class="schema-field-pk">PK</span></div>
+              <div class="schema-field"><span class="schema-field-name">document_id</span><span class="schema-field-type">FK</span></div>
+              <div class="schema-field"><span class="schema-field-name">reviewer_id</span><span class="schema-field-type">FK</span></div>
+              <div class="schema-field"><span class="schema-field-name">level</span><span class="schema-field-type">int</span></div>
+              <div class="schema-field"><span class="schema-field-name">action</span><span class="schema-field-type">enum</span></div>
+              <div class="schema-field"><span class="schema-field-name">catatan</span><span class="schema-field-type">text?</span></div>
+              <div class="schema-field"><span class="schema-field-name">created_at</span><span class="schema-field-type">timestamp</span></div>
+            </div>
+          </div>
+          <div class="schema-table">
+            <div class="schema-table-header">document_attachments</div>
+            <div class="schema-table-body">
+              <div class="schema-field"><span class="schema-field-name">id</span><span class="schema-field-pk">PK</span></div>
+              <div class="schema-field"><span class="schema-field-name">document_id</span><span class="schema-field-type">FK</span></div>
+              <div class="schema-field"><span class="schema-field-name">filename</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">filepath</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">filetype</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">filesize</span><span class="schema-field-type">int</span></div>
+            </div>
+          </div>
+          <div class="schema-table">
+            <div class="schema-table-header">notifications</div>
+            <div class="schema-table-body">
+              <div class="schema-field"><span class="schema-field-name">id</span><span class="schema-field-pk">PK</span></div>
+              <div class="schema-field"><span class="schema-field-name">user_id</span><span class="schema-field-type">FK</span></div>
+              <div class="schema-field"><span class="schema-field-name">type</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">data</span><span class="schema-field-type">json</span></div>
+              <div class="schema-field"><span class="schema-field-name">read_at</span><span class="schema-field-type">timestamp?</span></div>
+            </div>
+          </div>
+          <div class="schema-table">
+            <div class="schema-table-header">audit_logs</div>
+            <div class="schema-table-body">
+              <div class="schema-field"><span class="schema-field-name">id</span><span class="schema-field-pk">PK</span></div>
+              <div class="schema-field"><span class="schema-field-name">user_id</span><span class="schema-field-type">FK?</span></div>
+              <div class="schema-field"><span class="schema-field-name">action</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">subject_type</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">subject_id</span><span class="schema-field-type">int</span></div>
+              <div class="schema-field"><span class="schema-field-name">ip_address</span><span class="schema-field-type">string</span></div>
+              <div class="schema-field"><span class="schema-field-name">created_at</span><span class="schema-field-type">timestamp</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="info-box">
+          <strong>Status Enum untuk tabel documents</strong>
+          draft → submitted → under_review → revision_requested → approved → signing → archived → rejected
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">3</div>
+      <div>
+        <h4>Rancang Alur Review Bertingkat</h4>
+        <div class="flow-diagram">
+          <div class="flow-node">Draft</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node active">Submitted</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node active">Review Lvl 1</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node active">Review Lvl 2</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node active">Admin Approval</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">Archived</div>
+        </div>
+        <p>Logika <code>current_level</code> di tabel dokumen menentukan reviewer mana yang mendapat giliran. Setiap reviewer hanya bisa melihat dokumen yang berada di level-nya.</p>
+        <div class="deliverable">
+          <strong>📄 Deliverable</strong>
+          Dokumen arsitektur <code>Architecture_DocFlow.pdf</code> berisi: diagram MVC layers, ERD lengkap dengan relasi, state diagram alur dokumen, dan penjelasan tiap komponen.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================== FASE 4 ======================== -->
+<div class="phase" id="fase4">
+  <div class="phase-header">
+    <div class="phase-num">4</div>
+    <div class="phase-header-text">
+      <div class="phase-label">Fase 4 · Setup</div>
+      <h2>Setup Environment & Project Scaffolding</h2>
+      <p>Persiapan teknis: instalasi Laravel 12, konfigurasi database, struktur folder, dan tools pendukung.</p>
+      <div class="phase-meta">
+        <span class="phase-tag yellow">⏱ 1–2 Hari</span>
+        <span class="phase-tag blue">💻 Output: Repo siap coding</span>
+      </div>
+    </div>
+  </div>
+  <div class="phase-body">
+
+    <div class="step">
+      <div class="step-bullet">1</div>
+      <div>
+        <h4>Install Laravel 12 & Dependensi</h4>
+        <div class="code-block">
+          <div class="code-label">TERMINAL</div>
+          <pre><span class="code-comment"># Install Laravel 12 via Composer</span>
+<span class="code-cmd">composer create-project laravel/laravel docflow</span>
+<span class="code-cmd">cd docflow</span>
+
+<span class="code-comment"># Install paket tambahan yang dibutuhkan</span>
+<span class="code-cmd">composer require spatie/laravel-permission</span>
+<span class="code-cmd">composer require intervention/image</span>
+<span class="code-cmd">composer require barryvdh/laravel-debugbar --dev</span>
+
+<span class="code-comment"># Install frontend tooling</span>
+<span class="code-cmd">npm install && npm run build</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">2</div>
+      <div>
+        <h4>Konfigurasi .env & Database</h4>
+        <div class="code-block">
+          <div class="code-label">.ENV</div>
+          <pre><span class="code-key">APP_NAME</span>=<span class="code-str">DocFlow</span>
+<span class="code-key">APP_ENV</span>=<span class="code-str">local</span>
+<span class="code-key">APP_URL</span>=<span class="code-str">http://localhost:8000</span>
+
+<span class="code-key">DB_CONNECTION</span>=<span class="code-str">mysql</span>
+<span class="code-key">DB_HOST</span>=<span class="code-str">127.0.0.1</span>
+<span class="code-key">DB_PORT</span>=<span class="code-str">3306</span>
+<span class="code-key">DB_DATABASE</span>=<span class="code-str">docflow_db</span>
+<span class="code-key">DB_USERNAME</span>=<span class="code-str">root</span>
+<span class="code-key">DB_PASSWORD</span>=<span class="code-str">password</span>
+
+<span class="code-key">FILESYSTEM_DISK</span>=<span class="code-str">local</span>
+<span class="code-key">QUEUE_CONNECTION</span>=<span class="code-str">database</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">3</div>
+      <div>
+        <h4>Buat Struktur Direktori yang Terorganisir</h4>
+        <div class="code-block">
+          <div class="code-label">STRUKTUR FOLDER</div>
+          <pre><span class="code-str">app/</span>
+├── <span class="code-str">Http/Controllers/</span>
+│   ├── Auth/
+│   ├── User/          <span class="code-comment"># DocumentController, AttachmentController</span>
+│   ├── Reviewer/      <span class="code-comment"># ReviewController</span>
+│   └── Admin/         <span class="code-comment"># AdminController, UserManagementController</span>
+├── <span class="code-str">Services/</span>
+│   ├── DocumentService.php
+│   ├── ReviewService.php
+│   └── AuditLogService.php
+├── <span class="code-str">Models/</span>
+│   ├── User.php
+│   ├── Document.php
+│   ├── ReviewLog.php
+│   └── AuditLog.php
+├── <span class="code-str">Policies/</span>
+│   ├── DocumentPolicy.php
+│   └── ReviewPolicy.php
+└── <span class="code-str">Events/</span> & Listeners/
+    ├── DocumentSubmitted.php
+    └── ReviewCompleted.php</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">4</div>
+      <div>
+        <h4>Buat Semua Migration & Jalankan</h4>
+        <div class="code-block">
+          <div class="code-label">TERMINAL</div>
+          <pre><span class="code-comment"># Buat migration untuk setiap tabel</span>
+<span class="code-cmd">php artisan make:migration create_documents_table</span>
+<span class="code-cmd">php artisan make:migration create_review_logs_table</span>
+<span class="code-cmd">php artisan make:migration create_document_attachments_table</span>
+<span class="code-cmd">php artisan make:migration create_audit_logs_table</span>
+<span class="code-cmd">php artisan make:migration add_role_status_to_users_table</span>
+
+<span class="code-comment"># Jalankan semua migration</span>
+<span class="code-cmd">php artisan migrate</span>
+
+<span class="code-comment"># Buat seeder untuk data awal</span>
+<span class="code-cmd">php artisan make:seeder AdminUserSeeder</span>
+<span class="code-cmd">php artisan db:seed</span></pre>
+        </div>
+        <div class="deliverable">
+          <strong>✅ Deliverable</strong>
+          Repository Git dengan struktur lengkap, database terbuat, dan <code>php artisan serve</code> berjalan tanpa error.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================== FASE 5 ======================== -->
+<div class="phase" id="fase5">
+  <div class="phase-header">
+    <div class="phase-num danger">5</div>
+    <div class="phase-header-text">
+      <div class="phase-label">Fase 5 · Implementation (Core)</div>
+      <h2>Implementasi Modul — Urutan Berdasarkan Dependensi</h2>
+      <p>Jalote menekankan: kerjakan modul yang paling banyak dependensinya (foundational modules) lebih dulu. Ini prinsip dari Iterative Development — setiap iterasi menghasilkan sistem yang bisa diuji.</p>
+      <div class="phase-meta">
+        <span class="phase-tag">📖 Bab 6 & 7 Jalote</span>
+        <span class="phase-tag yellow">⏱ 15–20 Hari</span>
+        <span class="phase-tag red">🔑 Fase Terpanjang</span>
+      </div>
+    </div>
+  </div>
+  <div class="phase-body">
+
+    <div class="step">
+      <div class="step-bullet">A</div>
+      <div>
+        <h4>Modul 1: Authentication Multi-Role & Approval Akun</h4>
+        <p>Fondasi sistem. Semua modul lain bergantung pada sistem auth ini.</p>
+        <ul class="checklist">
+          <li>Modifikasi tabel users: tambah kolom <code>role</code> (enum: user, reviewer, admin) dan <code>status</code> (enum: pending, active, inactive)</li>
+          <li>Buat tiga guard atau gunakan satu guard dengan role check via middleware</li>
+          <li>Buat <code>AuthController</code> dengan login, register, logout</li>
+          <li>Middleware <code>RoleMiddleware</code>: cek role dan redirect ke dashboard yang sesuai</li>
+          <li>Admin dapat melihat daftar akun pending dan meng-approve atau menolak</li>
+          <li>Setelah register, user mendapat status pending dan tidak bisa login sampai disetujui</li>
+        </ul>
+        <div class="code-block">
+          <div class="code-label">PHP — MIDDLEWARE</div>
+          <pre><span class="code-comment">// app/Http/Middleware/RoleMiddleware.php</span>
+<span class="code-key">public function</span> <span class="code-func">handle</span>(Request $request, Closure $next, ...$roles): Response
+{
+    <span class="code-key">if</span> (!auth()->check()) {
+        <span class="code-key">return</span> redirect(<span class="code-str">'/login'</span>);
+    }
+
+    $user = auth()->user();
+
+    <span class="code-key">if</span> ($user->status !== <span class="code-str">'active'</span>) {
+        auth()->logout();
+        <span class="code-key">return</span> redirect(<span class="code-str">'/login'</span>)->with(<span class="code-str">'error'</span>, <span class="code-str">'Akun belum disetujui admin.'</span>);
+    }
+
+    <span class="code-key">if</span> (!in_array($user->role, $roles)) {
+        abort(403, <span class="code-str">'Akses ditolak.'</span>);
+    }
+
+    <span class="code-key">return</span> $next($request);
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">B</div>
+      <div>
+        <h4>Modul 2: Manajemen Dokumen (User)</h4>
+        <p>CRUD dokumen lengkap dengan fitur draft, submit, dan upload lampiran.</p>
+        <ul class="checklist">
+          <li>Form pengajuan: judul, jenis dokumen, unit kerja, deskripsi, tanggal berlaku</li>
+          <li>Upload lampiran (multiple files) — simpan ke <code>storage/app/documents/</code></li>
+          <li>Tombol "Simpan Draft" vs "Submit" — bedakan status di database</li>
+          <li>Autosave draft setiap 30 detik menggunakan JavaScript + AJAX endpoint</li>
+          <li>List dokumen milik user dengan filter status dan pencarian</li>
+          <li>Setelah submit, dokumen tidak bisa diedit kecuali status kembali ke draft (dari request revision)</li>
+        </ul>
+        <div class="code-block">
+          <div class="code-label">PHP — DOCUMENT SERVICE</div>
+          <pre><span class="code-comment">// app/Services/DocumentService.php</span>
+<span class="code-key">public function</span> <span class="code-func">submit</span>(Document $document): void
+{
+    <span class="code-key">if</span> ($document->status !== <span class="code-str">'draft'</span>) {
+        <span class="code-key">throw new</span> InvalidArgumentException(<span class="code-str">'Hanya draft yang bisa disubmit.'</span>);
+    }
+
+    $document->update([
+        <span class="code-str">'status'</span>        => <span class="code-str">'submitted'</span>,
+        <span class="code-str">'current_level'</span> => 1,
+        <span class="code-str">'submitted_at'</span>  => now(),
+    ]);
+
+    event(<span class="code-key">new</span> DocumentSubmitted($document));
+    AuditLogService::log(<span class="code-str">'document.submitted'</span>, $document);
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">C</div>
+      <div>
+        <h4>Modul 3: Alur Review Bertingkat (Core Business Logic)</h4>
+        <p>Ini adalah modul paling kompleks — harus dikerjakan dengan hati-hati dan ditest secara menyeluruh.</p>
+        <ul class="checklist">
+          <li>Reviewer hanya bisa melihat dokumen yang <code>current_level</code>-nya sesuai <code>reviewer_level</code> mereka</li>
+          <li>Tiga aksi review: <strong>Approve</strong> (naik level atau selesai), <strong>Request Changes</strong> (kembali ke draft), <strong>Reject</strong> (ditolak permanen)</li>
+          <li>Setiap aksi disimpan ke tabel <code>review_logs</code> beserta catatan dan timestamp</li>
+          <li>Sistem otomatis tentukan apakah ada reviewer level berikutnya atau langsung ke admin</li>
+          <li>Monitoring deadline: hitung hari sejak dokumen masuk ke reviewer</li>
+          <li>Notifikasi dikirim ke reviewer saat dokumen masuk, dan ke user saat ada keputusan</li>
+        </ul>
+        <div class="code-block">
+          <div class="code-label">PHP — REVIEW SERVICE</div>
+          <pre><span class="code-key">public function</span> <span class="code-func">approve</span>(Document $document, User $reviewer, string $catatan = null): void
+{
+    $maxLevel = User::where(<span class="code-str">'role'</span>, <span class="code-str">'reviewer'</span>)->max(<span class="code-str">'reviewer_level'</span>);
+
+    ReviewLog::create([
+        <span class="code-str">'document_id'</span>  => $document->id,
+        <span class="code-str">'reviewer_id'</span>  => $reviewer->id,
+        <span class="code-str">'level'</span>        => $document->current_level,
+        <span class="code-str">'action'</span>       => <span class="code-str">'approved'</span>,
+        <span class="code-str">'catatan'</span>      => $catatan,
+    ]);
+
+    <span class="code-key">if</span> ($document->current_level >= $maxLevel) {
+        <span class="code-comment">// Naik ke admin untuk final approval</span>
+        $document->update([<span class="code-str">'status'</span> => <span class="code-str">'approved'</span>]);
+    } <span class="code-key">else</span> {
+        <span class="code-comment">// Naik ke reviewer level berikutnya</span>
+        $document->increment(<span class="code-str">'current_level'</span>);
+        $document->update([<span class="code-str">'status'</span> => <span class="code-str">'under_review'</span>]);
+        event(<span class="code-key">new</span> ReviewLevelAdvanced($document));
+    }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">D</div>
+      <div>
+        <h4>Modul 4: Dashboard Per Peran</h4>
+        <p>Setiap peran mendapat dashboard yang berbeda — dibuat menggunakan blade template dengan data yang sudah di-filter berdasarkan role.</p>
+        <table class="data-table">
+          <thead><tr><th>Dashboard</th><th>Komponen Utama</th></tr></thead>
+          <tbody>
+            <tr><td><strong>User</strong></td><td>Statistik dokumen per status, daftar dokumen terbaru, tombol buat dokumen baru</td></tr>
+            <tr><td><strong>Reviewer</strong></td><td>Antrian dokumen yang perlu direview, indikator deadline, riwayat review yang dilakukan</td></tr>
+            <tr><td><strong>Admin</strong></td><td>Overview semua dokumen, daftar akun pending, grafik aktivitas, link ke arsip</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">E</div>
+      <div>
+        <h4>Modul 5: Notifikasi, Audit Log & Arsip</h4>
+        <ul class="checklist">
+          <li>Gunakan Laravel Notifications (database channel) untuk notifikasi in-app</li>
+          <li>AuditLogService dipanggil di setiap aksi penting — catat: user, action, subject, IP, timestamp</li>
+          <li>Fitur arsip: admin bisa pindahkan dokumen yang sudah selesai ke status archived</li>
+          <li>Halaman riwayat dokumen: user bisa lihat semua review log untuk dokumennya</li>
+        </ul>
+        <div class="deliverable">
+          <strong>✅ Deliverable Fase 5</strong>
+          Semua fitur berfungsi end-to-end. Setiap iterasi (per modul) di-commit ke Git dengan pesan commit yang deskriptif. Branch strategy: <code>main</code>, <code>dev</code>, feature branches per modul.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================== FASE 6 ======================== -->
+<div class="phase" id="fase6">
+  <div class="phase-header">
+    <div class="phase-num">6</div>
+    <div class="phase-header-text">
+      <div class="phase-label">Fase 6 · Quality Assurance</div>
+      <h2>Testing, Debugging & Code Review</h2>
+      <p>Jalote Bab 8 & 9: testing bukan tambahan opsional — ini bagian inti dari Software Engineering. "Software that hasn't been tested is software that doesn't work."</p>
+      <div class="phase-meta">
+        <span class="phase-tag">📖 Bab 8 & 9 Jalote</span>
+        <span class="phase-tag yellow">⏱ 5–7 Hari</span>
+        <span class="phase-tag blue">📄 Output: Test Report</span>
+      </div>
+    </div>
+  </div>
+  <div class="phase-body">
+
+    <div class="step">
+      <div class="step-bullet">1</div>
+      <div>
+        <h4>Unit Testing — Setiap Service & Model</h4>
+        <div class="code-block">
+          <div class="code-label">PHP — UNIT TEST</div>
+          <pre><span class="code-comment">// tests/Unit/ReviewServiceTest.php</span>
+<span class="code-key">public function</span> <span class="code-func">test_approve_advances_to_next_level</span>(): void
+{
+    $reviewer = User::factory()->create([<span class="code-str">'reviewer_level'</span> => 1]);
+    $document = Document::factory()->create([
+        <span class="code-str">'status'</span>        => <span class="code-str">'under_review'</span>,
+        <span class="code-str">'current_level'</span> => 1,
+    ]);
+
+    $this->reviewService->approve($document, $reviewer);
+
+    $this->assertEquals(2, $document->fresh()->current_level);
+    $this->assertDatabaseHas(<span class="code-str">'review_logs'</span>, [
+        <span class="code-str">'document_id'</span> => $document->id,
+        <span class="code-str">'action'</span>      => <span class="code-str">'approved'</span>,
+    ]);
+}
+
+<span class="code-key">public function</span> <span class="code-func">test_request_changes_returns_to_draft</span>(): void { ... }</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">2</div>
+      <div>
+        <h4>Feature Testing — End-to-End Flows</h4>
+        <ul class="checklist">
+          <li>Test: User register → admin approve → user login → buat dokumen → submit</li>
+          <li>Test: Dokumen di-review oleh reviewer level 1 → naik ke level 2 → approved → archived</li>
+          <li>Test: Reviewer minta revisi → dokumen kembali ke draft → user edit → re-submit</li>
+          <li>Test: Akses ditolak jika user mencoba akses halaman reviewer (authorization)</li>
+          <li>Test: Upload file — pastikan file tersimpan dan bisa diakses kembali</li>
+        </ul>
+        <div class="code-block">
+          <div class="code-label">TERMINAL</div>
+          <pre><span class="code-comment"># Jalankan semua test</span>
+<span class="code-cmd">php artisan test --coverage</span>
+
+<span class="code-comment"># Target: coverage minimal 70%</span>
+<span class="code-comment"># Fokus pada business logic di Services layer</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">3</div>
+      <div>
+        <h4>Manual Testing & User Acceptance Testing (UAT)</h4>
+        <p>Jalote menekankan pentingnya <em>acceptance testing</em> — verifikasi bahwa sistem memenuhi requirements yang didefinisikan di Fase 1.</p>
+        <ul class="checklist">
+          <li>Buat test script manual berdasarkan use case di SRS</li>
+          <li>Libatkan calon pengguna nyata untuk UAT selama 1–2 hari</li>
+          <li>Catat semua bug dan feedback dalam issue tracker (GitHub Issues / Jira)</li>
+          <li>Prioritaskan bug: Critical (blocker) → High → Medium → Low</li>
+        </ul>
+        <div class="deliverable">
+          <strong>📄 Deliverable</strong>
+          Test Report mencakup: daftar test case, hasil automated test (coverage %), hasil UAT, dan daftar bug yang sudah diperbaiki.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================== FASE 7 ======================== -->
+<div class="phase" id="fase7">
+  <div class="phase-header">
+    <div class="phase-num highlight">7</div>
+    <div class="phase-header-text">
+      <div class="phase-label">Fase 7 · Deployment</div>
+      <h2>Deployment ke Server Production & Go-Live</h2>
+      <p>Persiapan server, konfigurasi production, dan peluncuran sistem untuk digunakan nyata.</p>
+      <div class="phase-meta">
+        <span class="phase-tag yellow">⏱ 2–3 Hari</span>
+        <span class="phase-tag blue">🚀 Output: Sistem Live</span>
+      </div>
+    </div>
+  </div>
+  <div class="phase-body">
+
+    <div class="step">
+      <div class="step-bullet">1</div>
+      <div>
+        <h4>Persiapan Server Production</h4>
+        <ul class="checklist">
+          <li>Server: VPS Ubuntu 22.04 atau shared hosting dengan PHP 8.2+</li>
+          <li>Install: Nginx/Apache, PHP 8.2, MySQL 8.0, Composer, Node.js</li>
+          <li>Setup SSL certificate (Let's Encrypt / Certbot)</li>
+          <li>Konfigurasi Nginx virtual host untuk domain</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">2</div>
+      <div>
+        <h4>Deploy Aplikasi</h4>
+        <div class="code-block">
+          <div class="code-label">TERMINAL — SERVER</div>
+          <pre><span class="code-comment"># Clone repo ke server</span>
+<span class="code-cmd">git clone https://github.com/org/docflow.git /var/www/docflow</span>
+<span class="code-cmd">cd /var/www/docflow</span>
+
+<span class="code-comment"># Install dependencies</span>
+<span class="code-cmd">composer install --optimize-autoloader --no-dev</span>
+<span class="code-cmd">npm install && npm run build</span>
+
+<span class="code-comment"># Setup environment production</span>
+<span class="code-cmd">cp .env.example .env</span>
+<span class="code-cmd">php artisan key:generate</span>
+<span class="code-comment"># Edit .env: set APP_ENV=production, APP_DEBUG=false, DB credentials</span>
+
+<span class="code-comment"># Migrate & seed</span>
+<span class="code-cmd">php artisan migrate --force</span>
+<span class="code-cmd">php artisan db:seed --class=AdminUserSeeder --force</span>
+
+<span class="code-comment"># Optimasi production</span>
+<span class="code-cmd">php artisan config:cache</span>
+<span class="code-cmd">php artisan route:cache</span>
+<span class="code-cmd">php artisan view:cache</span>
+
+<span class="code-comment"># Storage symlink</span>
+<span class="code-cmd">php artisan storage:link</span>
+
+<span class="code-comment"># Permission folder</span>
+<span class="code-cmd">chmod -R 775 storage bootstrap/cache</span>
+<span class="code-cmd">chown -R www-data:www-data .</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">3</div>
+      <div>
+        <h4>Setup Queue Worker & Scheduler</h4>
+        <div class="code-block">
+          <div class="code-label">SUPERVISOR CONFIG</div>
+          <pre><span class="code-comment"># /etc/supervisor/conf.d/docflow-worker.conf</span>
+[program:docflow-worker]
+<span class="code-key">command</span>=<span class="code-str">php /var/www/docflow/artisan queue:work --sleep=3 --tries=3</span>
+<span class="code-key">autostart</span>=true
+<span class="code-key">autorestart</span>=true
+<span class="code-key">user</span>=www-data
+<span class="code-key">numprocs</span>=2</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-label">CRONTAB</div>
+          <pre><span class="code-comment"># crontab -e</span>
+* * * * * cd /var/www/docflow && php artisan schedule:run >> /dev/null 2>&1</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">4</div>
+      <div>
+        <h4>Smoke Testing Production & Go-Live Checklist</h4>
+        <ul class="checklist">
+          <li>Login dengan akun admin default berhasil</li>
+          <li>HTTPS berjalan, sertifikat SSL valid</li>
+          <li>Upload file berhasil dan bisa didownload</li>
+          <li>Alur review end-to-end berfungsi di production</li>
+          <li>Email/notifikasi terkirim dengan benar</li>
+          <li>Backup otomatis database dikonfigurasi</li>
+        </ul>
+        <div class="deliverable">
+          <strong>🚀 Go-Live!</strong>
+          Sistem resmi dapat diakses di domain production. Sosialisasi ke pengguna dengan panduan singkat per peran.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================== FASE 8 ======================== -->
+<div class="phase" id="fase8">
+  <div class="phase-header">
+    <div class="phase-num">8</div>
+    <div class="phase-header-text">
+      <div class="phase-label">Fase 8 · Post-Launch</div>
+      <h2>Maintenance, Monitoring & Iterasi Berikutnya</h2>
+      <p>Jalote Bab 2.2 menyebut maintenance sebagai fase paling panjang dalam lifecycle software. Biayanya bisa mencapai 80% dari total biaya pengembangan jika tidak dikelola dengan baik.</p>
+      <div class="phase-meta">
+        <span class="phase-tag">📖 Bab 2 Jalote</span>
+        <span class="phase-tag yellow">⏱ Berkelanjutan</span>
+      </div>
+    </div>
+  </div>
+  <div class="phase-body">
+
+    <div class="step">
+      <div class="step-bullet">1</div>
+      <div>
+        <h4>Setup Monitoring & Error Tracking</h4>
+        <ul class="checklist">
+          <li>Integrasikan <strong>Sentry</strong> atau <strong>Bugsnag</strong> untuk error tracking otomatis</li>
+          <li>Monitor server: CPU, memory, disk usage (Netdata atau UptimeRobot)</li>
+          <li>Aktifkan Laravel Telescope di staging environment</li>
+          <li>Setup alert email jika server down atau error rate tinggi</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">2</div>
+      <div>
+        <h4>Corrective & Adaptive Maintenance</h4>
+        <p>Jalote membedakan tiga jenis maintenance: <em>Corrective</em> (perbaiki bug), <em>Adaptive</em> (sesuaikan dengan lingkungan baru), dan <em>Perfective</em> (tingkatkan performa/fitur).</p>
+        <ul class="checklist">
+          <li>Pantau bug report dari pengguna — respons bug kritis dalam 24 jam</li>
+          <li>Update dependensi secara berkala: <code>composer update</code>, <code>npm update</code></li>
+          <li>Update Laravel ketika versi baru stabil (mengikuti security patches)</li>
+          <li>Review error log mingguan di production</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-bullet">3</div>
+      <div>
+        <h4>Iterasi Fitur Berikutnya</h4>
+        <p>Berdasarkan feedback pengguna, rencanakan enhancement untuk iterasi berikutnya menggunakan siklus yang sama dari Fase 1.</p>
+        <ul class="checklist">
+          <li>Kumpulkan feedback terstruktur dari pengguna setelah 2–4 minggu pemakaian</li>
+          <li>Prioritaskan enhancement berdasarkan value vs effort</li>
+          <li>Fitur potensial: export laporan ke PDF/Excel, integrasi email notification, mobile-responsive UI, REST API untuk integrasi sistem lain</li>
+          <li>Setiap enhancement mengikuti mini-cycle: requirements → design → implement → test → deploy</li>
+        </ul>
+        <div class="deliverable">
+          <strong>📋 Dokumen Hidup</strong>
+          Maintain <code>CHANGELOG.md</code> dan <code>ROADMAP.md</code> di repo — dokumentasikan semua perubahan dan rencana ke depan.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Summary Table -->
+<div class="section-divider"><div class="sd-line"></div><div class="sd-label">Ringkasan Keseluruhan</div><div class="sd-line"></div></div>
+<div style="max-width:900px;margin:0 auto 48px;">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Fase</th>
+        <th>Aktivitas</th>
+        <th>Referensi Jalote</th>
+        <th>Durasi</th>
+        <th>Deliverable</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>1. Requirements</strong></td><td>SRS, use case, validasi</td><td>Bab 3</td><td>3–5 hari</td><td>Dokumen SRS</td></tr>
+      <tr><td><strong>2. Planning</strong></td><td>Estimasi, jadwal, risiko</td><td>Bab 4</td><td>2–3 hari</td><td>Project Plan</td></tr>
+      <tr><td><strong>3. Architecture</strong></td><td>ERD, arsitektur MVC, alur</td><td>Bab 5 & 6</td><td>3–4 hari</td><td>Architecture Doc</td></tr>
+      <tr><td><strong>4. Setup</strong></td><td>Instalasi, migrasi, struktur folder</td><td>—</td><td>1–2 hari</td><td>Repo siap</td></tr>
+      <tr><td><strong>5. Implementation</strong></td><td>Coding semua modul</td><td>Bab 6 & 7</td><td>15–20 hari</td><td>Aplikasi lengkap</td></tr>
+      <tr><td><strong>6. Testing</strong></td><td>Unit test, UAT, bug fixing</td><td>Bab 8 & 9</td><td>5–7 hari</td><td>Test Report</td></tr>
+      <tr><td><strong>7. Deployment</strong></td><td>Server setup, deploy, go-live</td><td>—</td><td>2–3 hari</td><td>Sistem live</td></tr>
+      <tr><td><strong>8. Maintenance</strong></td><td>Monitoring, iterasi lanjutan</td><td>Bab 2</td><td>Berkelanjutan</td><td>Changelog</td></tr>
+      <tr style="background:var(--accent-light)"><td colspan="3"><strong>Total Estimasi</strong></td><td><strong>~35–45 Hari</strong></td><td>Sistem production-ready</td></tr>
+    </tbody>
+  </table>
+  <div class="info-box" style="margin-top:16px;">
+    <strong>Prinsip Utama dari Jalote yang Diterapkan</strong>
+    (1) Jangan mulai coding sebelum requirements jelas dan tervalidasi. (2) Gunakan iterative development — tiap iterasi hasilkan sesuatu yang bisa diuji. (3) Tangani risiko tertinggi di awal (alur review bertingkat). (4) Testing adalah aktivitas yang direncanakan, bukan afterthought. (5) Dokumentasikan semua keputusan desain — maintenance dimulai sejak hari pertama.
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>Panduan ini disusun berdasarkan <em>A Concise Introduction to Software Engineering</em> — Pankaj Jalote (Springer, 2008)</p>
+  <p style="margin-top:8px;opacity:0.6;font-size:12px;">Proyek: DocFlow Management System · Laravel 12 · Metodologi: Iterative Software Development</p>
+</footer>
+
+<script>
+  (function() {
+    const savedTheme = localStorage.getItem('docflow-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+
+  function toggleTheme() {
+    const root = document.documentElement;
+    const themeButton = document.getElementById('theme-toggle');
+    const isDark = root.classList.toggle('dark');
+    localStorage.setItem('docflow-theme', isDark ? 'dark' : 'light');
+    if (themeButton) {
+      themeButton.textContent = isDark ? '☀️' : '🌙';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const themeButton = document.getElementById('theme-toggle');
+    if (themeButton) {
+      themeButton.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+    }
+  });
+</script>
+
+</body>
+</html>

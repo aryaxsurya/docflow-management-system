@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background: #0a1124;
+            color: #e6eeff;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(14px);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 glass min-h-screen p-6">
+        <h2 class="text-2xl font-bold text-blue-300 mb-10 flex items-center gap-2">
+            👤 User Panel
+        </h2>
+
+        <nav class="space-y-4">
+            <a href="/user/dashboard" class="block hover:text-blue-400">🏠 Dashboard</a>
+            <a href="/user/pengajuan/create" class="block hover:text-blue-400">📄 Pengajuan Dokumen</a>
+            <a href="/user/pengajuan" class="block hover:text-blue-400">📁 Riwayat Pengajuan</a>
+            <a href="/user/profile" class="block hover:text-blue-400">⚙️ Pengaturan Akun</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 p-10">
+
+        <!-- HEADER -->
+        <div class="glass p-5 rounded-2xl flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-300">Dashboard User</h1>
+            <a href="/logout" class="text-red-300 hover:text-red-400">Logout</a>
+        </div>
+
+        <!-- SUMMARY BOXES -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+
+            <div class="glass p-6 rounded-2xl" data-aos="fade-up">
+                <h3 class="text-xl font-semibold text-blue-200">📄 Buat Pengajuan</h3>
+                <p class="text-blue-100 opacity-80 mb-4">Ajukan dokumen baru untuk diproses.</p>
+                <a href="/user/pengajuan/create"
+                    class="bg-blue-600 px-4 py-2 rounded-xl inline-block text-white hover:bg-blue-700">
+                    Ajukan Dokumen
+                </a>
+            </div>
+
+            <div class="glass p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="150">
+                <h3 class="text-xl font-semibold text-blue-200">📊 Status Pengajuan</h3>
+                <p class="text-blue-100 opacity-80">Lihat semua dokumen yang masih diproses.</p>
+            </div>
+
+            <div class="glass p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="300">
+                <h3 class="text-xl font-semibold text-blue-200">📁 Riwayat</h3>
+                <p class="text-blue-100 opacity-80 mb-3">Lihat seluruh riwayat pengajuan.</p>
+                <a href="/user/pengajuan" class="underline text-blue-300 hover:text-blue-400">Lihat Riwayat →</a>
+            </div>
+
+        </div>
+
+        <!-- TABLE LATEST STATUS -->
+        <div class="glass p-6 rounded-2xl" data-aos="fade-up">
+            <h2 class="text-xl font-semibold text-blue-200 mb-4">📌 Status Pengajuan Terbaru</h2>
+
+            <table class="w-full text-left text-blue-100">
+                <thead class="text-blue-300 border-b border-blue-700/50">
+                    <tr>
+                        <th class="py-2">Judul</th>
+                        <th class="py-2">Jenis</th>
+                        <th class="py-2">Status</th>
+                        <th class="py-2">Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b border-white/10">
+                        <td class="py-3">Contoh Dokumen A</td>
+                        <td>Surat Keputusan</td>
+                        <td class="text-yellow-300">Review 1</td>
+                        <td>2025-11-24</td>
+                    </tr>
+                    <tr>
+                        <td class="py-3">Contoh Dokumen B</td>
+                        <td>Memo Internal</td>
+                        <td class="text-green-300">Disetujui</td>
+                        <td>2025-11-23</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init({ once: true, duration: 900 });</script>
+</body>
+
+</html>
