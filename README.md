@@ -1,6 +1,6 @@
 # 📋 DocFlow Management System
 
-> Sistem manajemen alur dokumen berbasis web dengan review bertingkat — dibangun menggunakan **Laravel 12** dan **MySQL**.
+> A web-based document workflow management system with multi-level review — built with **Laravel 12** and **MySQL**.
 
 ![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat-square&logo=laravel&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square&logo=php&logoColor=white)
@@ -9,137 +9,137 @@
 
 ---
 
-## 📖 Tentang Proyek
+## 📖 About
 
-**DocFlow Management System** adalah aplikasi web untuk mengelola proses pengajuan, review, dan pengesahan dokumen secara bertingkat di dalam sebuah organisasi. Sistem ini dirancang dengan metodologi *Iterative Software Development* berdasarkan buku *A Concise Introduction to Software Engineering* oleh Pankaj Jalote (Springer, 2008).
+**DocFlow Management System** is a web application designed to manage the submission, review, and approval of documents through a structured multi-level workflow within an organization. This system was built following the *Iterative Software Development* methodology based on *A Concise Introduction to Software Engineering* by Pankaj Jalote (Springer, 2008).
 
-### Latar Belakang
+### Background
 
-Pengelolaan dokumen secara manual (via email atau fisik) sering menyebabkan keterlambatan, kehilangan dokumen, dan kurangnya transparansi status. DocFlow hadir sebagai solusi digital yang mengotomasi alur review, memberikan visibilitas penuh kepada semua pihak, dan mencatat setiap aktivitas melalui audit log.
-
----
-
-## ✨ Fitur Utama
-
-### 👤 Manajemen Pengguna (Multi-Role)
-- **3 peran pengguna:** User, Reviewer, dan Admin
-- Registrasi akun dengan approval dari Admin
-- Manajemen profil dan unit kerja
-
-### 📄 Manajemen Dokumen
-- Buat, simpan sebagai draft, edit, dan hapus dokumen
-- Upload lampiran file (PDF, Word, Excel, dll.)
-- Submit dokumen untuk memulai alur review
-- Lihat riwayat perubahan status dokumen
-
-### 🔄 Alur Review Bertingkat
-- Review multi-level (Level 1 → Level 2 → Admin Approval)
-- Setiap reviewer hanya melihat dokumen di level-nya
-- Aksi reviewer: **Approve**, **Reject**, atau **Minta Revisi**
-- Sistem kembali ke User untuk revisi jika diperlukan
-
-### 🔔 Notifikasi & Audit
-- Notifikasi real-time untuk setiap perubahan status
-- Audit log lengkap: setiap aksi tercatat beserta IP dan timestamp
-- Riwayat review tersimpan di `review_logs`
-
-### 📊 Dashboard per Peran
-- **User:** Status dokumen, draft yang belum disubmit, riwayat pengajuan
-- **Reviewer:** Antrian dokumen yang menunggu review, deadline monitor
-- **Admin:** Monitoring semua dokumen, manajemen user, arsip final
-
-### 🗄️ Arsip & Laporan
-- Dokumen yang disetujui otomatis masuk ke arsip
-- Filter dan pencarian dokumen berdasarkan status, jenis, dan periode
+Manual document management — via email or paper — frequently causes delays, lost files, and a lack of status transparency. DocFlow provides a digital solution that automates the review pipeline, gives all parties full visibility into document progress, and records every activity through a comprehensive audit log.
 
 ---
 
-## 🗂️ Alur Dokumen (State Diagram)
+## ✨ Key Features
+
+### 👤 Multi-Role User Management
+- **3 user roles:** User, Reviewer, and Admin
+- Account registration with Admin approval
+- Profile and work-unit management
+
+### 📄 Document Management
+- Create, save as draft, edit, and delete documents
+- Upload file attachments (PDF, Word, Excel, etc.)
+- Submit documents to initiate the review workflow
+- View document status history at any time
+
+### 🔄 Multi-Level Review Workflow
+- Multi-level review pipeline (Level 1 → Level 2 → Admin Approval)
+- Each reviewer only sees documents assigned to their level
+- Reviewer actions: **Approve**, **Reject**, or **Request Revision**
+- Documents are returned to the User if revision is required
+
+### 🔔 Notifications & Audit
+- Real-time notifications on every status change
+- Full audit log: every action recorded with IP address and timestamp
+- Review history stored in `review_logs`
+
+### 📊 Role-Based Dashboards
+- **User:** Document status, unpublished drafts, submission history
+- **Reviewer:** Document queue awaiting review, deadline monitor
+- **Admin:** System-wide document monitoring, user management, final archive
+
+### 🗄️ Archive & Reports
+- Approved documents are automatically moved to the archive
+- Filter and search documents by status, type, and date range
+
+---
+
+## 🗂️ Document State Diagram
 
 ```
 Draft → Submitted → Under Review (Lvl 1) → Under Review (Lvl 2) → Admin Approval → Archived
                          ↓                        ↓                      ↓
                    Revision Requested       Revision Requested        Rejected
                          ↓
-                    (kembali ke User)
+                   (returned to User)
 ```
 
 ---
 
 ## 🗃️ Database Schema
 
-| Tabel                  | Deskripsi                                      |
-|------------------------|------------------------------------------------|
-| `users`                | Data pengguna (role, status, unit kerja)       |
-| `documents`            | Dokumen utama + status + current_level         |
-| `document_attachments` | File lampiran per dokumen                      |
-| `review_logs`          | Riwayat aksi setiap reviewer per level         |
-| `notifications`        | Notifikasi per user                            |
-| `audit_logs`           | Log seluruh aktivitas sistem                   |
+| Table                  | Description                                        |
+|------------------------|----------------------------------------------------|
+| `users`                | User data (role, status, work unit)                |
+| `documents`            | Main document record + status + current_level      |
+| `document_attachments` | File attachments per document                      |
+| `review_logs`          | History of reviewer actions per level              |
+| `notifications`        | Per-user notifications                             |
+| `audit_logs`           | Full system activity log                           |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Komponen       | Teknologi              |
-|----------------|------------------------|
-| Backend        | Laravel 12 (PHP 8.2+)  |
-| Database       | MySQL 8.0              |
-| Frontend       | Blade + Tailwind CSS   |
+| Component      | Technology               |
+|----------------|--------------------------|
+| Backend        | Laravel 12 (PHP 8.2+)    |
+| Database       | MySQL 8.0                |
+| Frontend       | Blade + Tailwind CSS     |
 | Auth           | Laravel Breeze / Sanctum |
 | Queue          | Laravel Queue + Supervisor |
 | Scheduler      | Laravel Scheduler (Cron) |
-| Testing        | PHPUnit + Laravel Dusk |
+| Testing        | PHPUnit + Laravel Dusk   |
 
 ---
 
-## ⚙️ Cara Instalasi (Local Development)
+## ⚙️ Installation (Local Development)
 
-### Prasyarat
+### Prerequisites
 - PHP 8.2+
 - Composer
 - Node.js & NPM
 - MySQL 8.0
 - Git
 
-### Langkah Instalasi
+### Steps
 
 ```bash
-# 1. Clone repositori
+# 1. Clone the repository
 git clone https://github.com/aryaxsurya/docflow-management-system.git
 cd docflow-management-system
 
-# 2. Install dependensi PHP
+# 2. Install PHP dependencies
 composer install
 
-# 3. Install dependensi Node.js
+# 3. Install Node.js dependencies
 npm install && npm run build
 
-# 4. Salin file environment
+# 4. Copy the environment file
 cp .env.example .env
 
-# 5. Generate application key
+# 5. Generate the application key
 php artisan key:generate
 
-# 6. Konfigurasi database di file .env
+# 6. Configure your database in .env
 # DB_DATABASE=docflow
 # DB_USERNAME=root
 # DB_PASSWORD=your_password
 
-# 7. Jalankan migrasi dan seeder
+# 7. Run migrations and seeders
 php artisan migrate
 php artisan db:seed --class=AdminUserSeeder
 
-# 8. Buat storage symlink
+# 8. Create the storage symlink
 php artisan storage:link
 
-# 9. Jalankan server development
+# 9. Start the development server
 php artisan serve
 ```
 
-Akses aplikasi di: `http://localhost:8000`
+Access the application at: `http://localhost:8000`
 
-### Akun Default (Seeder)
+### Default Accounts (Seeder)
 | Role     | Email                    | Password   |
 |----------|--------------------------|------------|
 | Admin    | admin@docflow.test       | password   |
@@ -151,24 +151,24 @@ Akses aplikasi di: `http://localhost:8000`
 ## 🚀 Deployment (Production)
 
 ```bash
-# Setelah clone ke server
+# After cloning to the server
 composer install --optimize-autoloader --no-dev
 npm install && npm run build
 cp .env.example .env
 php artisan key:generate
 
-# Edit .env: APP_ENV=production, APP_DEBUG=false, DB credentials
+# Edit .env: set APP_ENV=production, APP_DEBUG=false, and DB credentials
 
 php artisan migrate --force
 php artisan db:seed --class=AdminUserSeeder --force
 
-# Optimasi cache
+# Cache optimization
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 php artisan storage:link
 
-# Permission
+# Set permissions
 chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data .
 ```
@@ -178,19 +178,19 @@ chown -R www-data:www-data .
 ## 🧪 Testing
 
 ```bash
-# Jalankan semua test
+# Run all tests
 php artisan test
 
-# Jalankan test spesifik
+# Run a specific test
 php artisan test --filter DocumentWorkflowTest
 
-# Coverage report
+# Generate a coverage report
 php artisan test --coverage
 ```
 
 ---
 
-## 📁 Struktur Folder
+## 📁 Folder Structure
 
 ```
 docflow-management-system/
@@ -198,10 +198,10 @@ docflow-management-system/
 │   ├── Http/
 │   │   ├── Controllers/       # AuthController, DocumentController, ReviewController, AdminController
 │   │   └── Requests/          # Form Request validation
-│   ├── Models/                # User, Document, ReviewLog, AuditLog, dll.
+│   ├── Models/                # User, Document, ReviewLog, AuditLog, etc.
 │   ├── Services/              # DocumentService, ReviewService (business logic)
-│   ├── Policies/              # Authorization per role
-│   └── Events/ & Listeners/   # Notifikasi & audit log (decoupled)
+│   ├── Policies/              # Role-based authorization
+│   └── Events/ & Listeners/   # Notifications & audit log (decoupled)
 ├── database/
 │   ├── migrations/
 │   └── seeders/
@@ -216,34 +216,34 @@ docflow-management-system/
 
 ---
 
-## 📋 Metodologi Pengembangan
+## 📋 Development Methodology
 
-Proyek ini mengikuti **8 fase Iterative Software Development** berdasarkan metodologi Jalote:
+This project follows **8 phases of Iterative Software Development** based on the Jalote methodology:
 
-| Fase | Aktivitas                             | Durasi    |
-|------|---------------------------------------|-----------|
-| 1    | Requirement Analysis & SRS            | 3–5 hari  |
-| 2    | Project Planning (estimasi & risiko)  | 2–3 hari  |
-| 3    | Arsitektur & Database Design          | 3–4 hari  |
-| 4    | Setup Environment & Scaffolding       | 1–2 hari  |
-| 5    | Implementasi Core Modules             | 15–20 hari|
-| 6    | Testing & Quality Assurance           | 5–7 hari  |
-| 7    | Deployment & Go-Live                  | 2–3 hari  |
-| 8    | Maintenance & Iterasi Lanjutan        | Berkelanjutan |
+| Phase | Activity                              | Duration      |
+|-------|---------------------------------------|---------------|
+| 1     | Requirement Analysis & SRS            | 3–5 days      |
+| 2     | Project Planning (estimation & risk)  | 2–3 days      |
+| 3     | Architecture & Database Design        | 3–4 days      |
+| 4     | Environment Setup & Scaffolding       | 1–2 days      |
+| 5     | Core Module Implementation            | 15–20 days    |
+| 6     | Testing & Quality Assurance           | 5–7 days      |
+| 7     | Deployment & Go-Live                  | 2–3 days      |
+| 8     | Maintenance & Next Iteration          | Ongoing       |
 
-**Total estimasi: ~35–45 hari kerja**
-
----
-
-## 🤝 Kontribusi
-
-Proyek ini dikembangkan sebagai tugas akademik. Kontribusi dan saran sangat diterima melalui [Issues](https://github.com/aryaxsurya/docflow-management-system/issues).
+**Total estimated effort: ~35–45 working days**
 
 ---
 
-## 📜 Lisensi
+## 🤝 Contributing
 
-Proyek ini menggunakan lisensi [MIT](LICENSE).
+This project was developed as an academic assignment. Contributions and suggestions are welcome via [Issues](https://github.com/aryaxsurya/docflow-management-system/issues).
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
@@ -254,4 +254,4 @@ GitHub: [@aryaxsurya](https://github.com/aryaxsurya)
 
 ---
 
-> *Panduan ini disusun berdasarkan A Concise Introduction to Software Engineering — Pankaj Jalote (Springer, 2008)*
+> *This project was built following A Concise Introduction to Software Engineering — Pankaj Jalote (Springer, 2008)*
